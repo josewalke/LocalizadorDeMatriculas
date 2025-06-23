@@ -1,0 +1,396 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# ===== DEPENDENCIES =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ===== EXPO =====
+.expo/
+.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# ===== NATIVE =====
+# Android
+android/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.so
+*.jar
+*.war
+*.ear
+*.nar
+*.aar
+*.ap_
+*.dex
+*.class
+*.so
+*.jar
+*.war
+*.ear
+*.nar
+*.aar
+
+# iOS
+ios/
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# ===== METRO =====
+.metro-health-check*
+metro.config.js
+
+# ===== DEBUG =====
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+.pnpm-debug.*
+
+# ===== OPERATING SYSTEM =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===== ENVIRONMENT & CONFIGURATION =====
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# API Keys and sensitive data
+.env.example
+config/local.js
+config/production.js
+secrets/
+keys/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ===== TYPESCRIPT =====
+*.tsbuildinfo
+*.tsbuildinfo.local
+
+# ===== LOGS =====
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ===== BACKEND (Future) =====
+# Node.js backend
+backend/
+server/
+uploads/
+images/
+temp/
+*.db
+*.sqlite
+*.sqlite3
+
+# ===== DEVELOPMENT TOOLS =====
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ===== TESTING =====
+coverage/
+.nyc_output
+.coverage
+*.lcov
+.jest/
+
+# ===== BUILD & DISTRIBUTION =====
+build/
+dist/
+out/
+.next/
+.nuxt/
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+
+# ===== CACHE =====
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# ===== TEMPORARY FILES =====
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ===== PROJECT SPECIFIC =====
+# Plate Recognizer API responses (if cached)
+api-cache/
+plate-cache/
+
+# Local development data
+local-data/
+test-data/
+
+# ===== SECURITY =====
+# Never commit these
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets.json
+firebase-key.json
+google-services.json
+GoogleService-Info.plist
+
+# ===== PERFORMANCE =====
+# Large files that shouldn't be in git
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+*.mkv
+*.m4v
+*.3gp
+*.ogv
+*.ts
+*.mts
+*.m2ts
+*.vob
+*.ogm
+*.ogx
+*.mxf
+*.wma
+*.aac
+*.ogg
+*.oga
+*.m4a
+*.flac
+*.wav
+*.bwf
+*.ape
+*.shn
+*.tta
+*.opus
+*.spx
+*.ra
+*.rm
+*.ram
+*.wv
+*.wvp
+*.dts
+*.dtshd
+*.dtsma
+*.eac3
+*.ec3
+*.mlp
+*.thd
+*.ac3
+*.mpa
+*.mp1
+*.mp2
+*.mp3
+*.m4b
+*.m4p
+*.m4r
+*.3ga
+*.aif
+*.aiff
+*.aifc
+*.au
+*.snd
+*.mid
+*.midi
+*.kar
+*.rmi
+*.mus
+*.mod
+*.mtm
+*.ult
+*.uni
+*.669
+*.it
+*.s3m
+*.xm
+*.far
+*.amf
+*.gdm
+*.stm
+*.ptb
+*.psm
+*.j2b
+*.nsf
+*.nsfe
+*.gbs
+*.gbr
+*.sap
+*.spc
+*.vgm
+*.vgz
+*.kss
+*.hes
+*.ay
+*.gym
+*.vgc
+*.s98
+*.rsn
+*.psf
+*.psf1
+*.psf2
+*.minipsf
+*.minipsf1
+*.minipsf2
+*.ssf
+*.dsf
+*.usf
+*.miniusf
+*.minissf
+*.minidsf
+*.miniusf
+*.2sf
+*.mini2sf
+*.3sf
+*.mini3sf
+*.4sf
+*.mini4sf
+*.psf
+*.mini psf
+*.psf1
+*.mini psf1
+*.psf2
+*.mini psf2
+*.ssf
+*.mini ssf
+*.dsf
+*.mini dsf
+*.usf
+*.mini usf
+*.2sf
+*.mini 2sf
+*.3sf
+*.mini 3sf
+*.4sf
+*.mini 4sf
+*.gsf
+*.mini gsf
+*.wsf
+*.mini wsf
+*.qsf
+*.mini qsf
+*.snsf
+*.mini snsf
+*.ncsf
+*.mini ncsf
+*.2sflib
+*.mini 2sflib
+*.3sflib
+*.mini 3sflib
+*.4sflib
+*.mini 4sflib
+*.gsflib
+*.mini gsflib
+*.wsflib
+*.mini wsflib
+*.qsflib
+*.mini qsflib
+*.snsflib
+*.mini snsflib
+*.ncsflib
+*.mini ncsflib
