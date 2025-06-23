@@ -13,6 +13,8 @@ Una aplicación móvil y web desarrollada con **React Native** y **Expo** que pe
 - **📋 Historial completo** con sistema de dropdown expandible
 - **🔍 Búsqueda en tiempo real** dentro del historial
 - **💾 Almacenamiento local** persistente con AsyncStorage
+- **☁️ Backend remoto** con API REST para sincronización de datos
+- **🖼️ Almacenamiento de imágenes** en servidor
 
 ### 🏗️ **Arquitectura Modular**
 - **Separación de responsabilidades** con servicios especializados
@@ -20,6 +22,7 @@ Una aplicación móvil y web desarrollada con **React Native** y **Expo** que pe
 - **Hooks personalizados** para lógica de negocio
 - **Tipos TypeScript** centralizados y bien definidos
 - **Configuración centralizada** para API keys y constantes
+- **Servicio de API** para comunicación con backend remoto
 
 ## 📁 **Estructura del Proyecto**
 
@@ -35,7 +38,8 @@ LocalizadorDeMatriculas/
 │   ├── services/           # Servicios de negocio
 │   │   ├── plateRecognizer.ts # API de reconocimiento de matrículas
 │   │   ├── locationService.ts # Gestión de ubicación y GPS
-│   │   └── historyService.ts  # Almacenamiento local del historial
+│   │   ├── historyService.ts  # Almacenamiento local del historial
+│   │   └── apiService.ts      # Comunicación con backend remoto
 │   ├── hooks/              # Hooks personalizados
 │   │   ├── useImagePicker.ts # Selección de imágenes
 │   │   └── useHistory.ts    # Gestión del estado del historial
@@ -63,6 +67,7 @@ LocalizadorDeMatriculas/
 - **exif-js** para extracción de metadatos GPS
 - **OpenStreetMap** para mapas gratuitos
 - **AsyncStorage** para persistencia local
+- **Backend REST API** para sincronización remota
 
 ### **Herramientas de Desarrollo**
 - **Expo CLI** para desarrollo y build
@@ -75,6 +80,7 @@ LocalizadorDeMatriculas/
 - Node.js (versión 16 o superior)
 - Expo CLI (`npm install -g @expo/cli`)
 - Cuenta en Plate Recognizer (para API key gratuita)
+- Backend funcionando en `http://192.168.1.100:3001`
 
 ### **Instalación**
 
@@ -96,7 +102,11 @@ npm install
    EXPO_PUBLIC_PLATE_RECOGNIZER_API_KEY=tu_api_key_aqui
    ```
 
-4. **Ejecutar la aplicación**
+4. **Verificar conexión al backend**
+   - Asegúrate de que el backend esté corriendo en `http://192.168.1.100:3001`
+   - Verifica la conectividad: `http://192.168.1.100:3001/api/health`
+
+5. **Ejecutar la aplicación**
 ```bash
 # Para desarrollo web
 npm run web
@@ -113,7 +123,7 @@ npm start
 3. La aplicación procesará la imagen y mostrará:
    - La matrícula reconocida
    - Ubicación en el mapa (si hay metadatos GPS)
-   - Se guardará automáticamente en el historial
+   - Se guardará automáticamente en el historial local y remoto
 
 ### **Versión Móvil**
 1. Usa "Tomar foto" para capturar una imagen con la cámara
@@ -132,6 +142,12 @@ npm start
 ### **Variables de Entorno**
 ```env
 EXPO_PUBLIC_PLATE_RECOGNIZER_API_KEY=tu_api_key_aqui
+```
+
+### **Configuración del Backend**
+El backend debe estar configurado en `src/services/apiService.ts`:
+```typescript
+const API_BASE_URL = 'http://192.168.1.100:3001/api';
 ```
 
 ### **Configuración de Regiones**
@@ -159,8 +175,9 @@ REGIONS: ['es', 'gb', 'fr', 'de', 'it'], // España, Reino Unido, Francia, Alema
 - **Precisión**: Indicadores de precisión GPS
 - **Formato**: Coordenadas decimales estándar
 
-### **Almacenamiento Local**
-- **AsyncStorage**: Persistencia entre sesiones
+### **Almacenamiento y Sincronización**
+- **AsyncStorage**: Persistencia local entre sesiones
+- **Backend REST**: Sincronización remota de datos
 - **Estructura**: Datos tipados con TypeScript
 - **Búsqueda**: Filtrado en tiempo real
 - **Gestión**: CRUD completo para elementos del historial
@@ -182,30 +199,33 @@ REGIONS: ['es', 'gb', 'fr', 'de', 'it'], // España, Reino Unido, Francia, Alema
    - No envíes fotos por WhatsApp (pierde metadatos)
    - Transfiere directamente desde el móvil al PC
 
-4. **Errores de permisos en móvil**
+4. **"Error de conexión al servidor"**
+   - Verifica que el backend esté corriendo en `http://192.168.1.100:3001`
+   - Asegúrate de que el dispositivo esté en la misma red WiFi
+   - Comprueba que el firewall permita conexiones al puerto 3001
+
+5. **Errores de permisos en móvil**
    - Acepta los permisos de cámara y ubicación cuando se soliciten
 
-5. **Historial no muestra elementos**
+6. **Historial no muestra elementos**
    - Limpia el historial actual y procesa nuevas imágenes
    - Verifica que no haya errores en la consola
 
 ## 🚀 **Roadmap Futuro**
 
 ### **Próximas Funcionalidades**
-- [ ] **Backend propio** con Node.js + Express + SQLite
-- [ ] **Almacenamiento de imágenes** en servidor local
-- [ ] **Historial público** compartido entre usuarios
 - [ ] **Notificaciones push** para nuevas detecciones
 - [ ] **Exportación de datos** (CSV, JSON)
 - [ ] **Estadísticas** de reconocimiento
 - [ ] **Modo offline** mejorado
-
-### **Mejoras Técnicas**
-- [ ] **Base de datos local** con SQLite
-- [ ] **API REST** completa
 - [ ] **Autenticación de usuarios**
 - [ ] **Sincronización en tiempo real**
+
+### **Mejoras Técnicas**
 - [ ] **Optimización de rendimiento**
+- [ ] **Cache inteligente** de imágenes
+- [ ] **Compresión automática** de imágenes
+- [ ] **Backup automático** de datos
 
 ## 🤝 **Contribuir**
 

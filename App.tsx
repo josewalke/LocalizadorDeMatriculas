@@ -16,12 +16,14 @@ import { PlateRecognizerService } from './src/services/plateRecognizer';
 import { LocationService } from './src/services/locationService';
 import { useImagePicker } from './src/hooks/useImagePicker';
 import { useHistory } from './src/hooks/useHistory';
+import { useBackendConnection } from './src/hooks/useBackendConnection';
 
 // Importar componentes
 import { InfoModal } from './src/components/InfoModal';
 import { PlateDisplay } from './src/components/PlateDisplay';
 import { MapDisplay } from './src/components/MapDisplay';
 import { HistoryModal } from './src/components/HistoryModal';
+import { ConnectionStatus } from './src/components/ConnectionStatus';
 
 // Importar tipos y configuración
 import { AppState, ImageData, LocationData, PlateRecognitionResult } from './src/types';
@@ -48,6 +50,14 @@ export default function App() {
     clearHistory, 
     searchHistory 
   } = useHistory();
+  
+  // Hook para verificar conectividad al backend
+  const { 
+    isConnected: backendConnected, 
+    isLoading: connectionLoading, 
+    error: connectionError, 
+    retryConnection 
+  } = useBackendConnection();
 
   const setLoading = (loading: boolean) => {
     setState(prev => ({ ...prev, isLoading: loading }));
@@ -148,6 +158,17 @@ export default function App() {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Indicador de estado de conexión al backend */}
+      <ConnectionStatus
+        connectionState={{
+          isConnected: backendConnected,
+          isLoading: connectionLoading,
+          error: connectionError,
+          lastChecked: new Date(),
+        }}
+        onRetry={retryConnection}
+      />
 
       <InfoModal 
         visible={showInfoModal} 
