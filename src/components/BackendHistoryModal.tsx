@@ -178,15 +178,9 @@ export const BackendHistoryModal: React.FC<BackendHistoryModalProps> = ({
         
         {isExpanded && (
           <View style={styles.expandedContent}>
-            <MiniMap location={{
-              latitude: item.latitude,
-              longitude: item.longitude,
-              accuracy: item.accuracy,
-              timestamp: new Date(item.created_at).getTime()
-            }} />
             {item.image_filename && (
               <View style={styles.imageContainer}>
-                <Text style={styles.imageTitle}>Imagen:</Text>
+                <Text style={styles.imageTitle}>🚗 Imagen del vehículo:</Text>
                 <Image 
                   source={{ uri: apiService.getImageUrl(item.image_filename) }}
                   style={styles.plateImage}
@@ -194,6 +188,16 @@ export const BackendHistoryModal: React.FC<BackendHistoryModalProps> = ({
                 />
               </View>
             )}
+            
+            <View style={styles.mapContainer}>
+              <Text style={styles.mapTitle}>🗺️ Ubicación:</Text>
+              <MiniMap location={{
+                latitude: item.latitude,
+                longitude: item.longitude,
+                accuracy: item.accuracy,
+                timestamp: new Date(item.created_at).getTime()
+              }} />
+            </View>
           </View>
         )}
       </View>
@@ -424,19 +428,36 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   imageContainer: {
-    marginTop: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   imageTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#333',
+    textAlign: 'center',
+  },
+  plateImage: {
+    width: '100%',
+    maxWidth: 300,
+    height: 180,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+  },
+  mapContainer: {
+    marginTop: 12,
+  },
+  mapTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 8,
     color: '#333',
-  },
-  plateImage: {
-    width: '100%',
-    height: 120,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
   },
 }); 

@@ -113,14 +113,15 @@ export const EditPlateModal: React.FC<EditPlateModalProps> = ({
   };
 
   const handleCancel = () => {
-    Alert.alert(
-      'Cancelar edición',
-      '¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.',
-      [
-        { text: 'Continuar editando', style: 'cancel' },
-        { text: 'Cancelar', style: 'destructive', onPress: onClose },
-      ]
-    );
+    console.log('❌ [EditPlateModal] Botón cancelar presionado');
+    // Cerrar directamente sin confirmación
+    onClose();
+  };
+
+  const handleClose = () => {
+    console.log('❌ [EditPlateModal] Botón X presionado');
+    // Cerrar directamente sin confirmación
+    onClose();
   };
 
   if (!plate) return null;
@@ -130,13 +131,13 @@ export const EditPlateModal: React.FC<EditPlateModalProps> = ({
       visible={visible}
       transparent={true}
       animationType="slide"
-      onRequestClose={handleCancel}
+      onRequestClose={handleClose}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <Text style={styles.title}>Editar Matrícula</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={handleCancel}>
+            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
           </View>
@@ -184,23 +185,33 @@ export const EditPlateModal: React.FC<EditPlateModalProps> = ({
 
             {/* Imagen del coche */}
             <View style={styles.imageSection}>
-              <Text style={styles.sectionTitle}>Imagen del vehículo</Text>
+              <Text style={styles.sectionTitle}>🚗 Imagen del vehículo</Text>
               
               {/* Imagen actual */}
-              {plate.image_filename && (
+              {plate.image_filename ? (
                 <View style={styles.currentImageContainer}>
-                  <Text style={styles.imageLabel}>Imagen actual:</Text>
+                  <Text style={styles.imageLabel}>📸 Imagen actual del vehículo</Text>
                   <Image 
                     source={{ uri: apiService.getImageUrl(plate.image_filename) }}
                     style={styles.image}
                     resizeMode="cover"
                   />
+                  <Text style={styles.imageInfo}>
+                    📁 Archivo: {plate.image_filename}
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.noImageContainer}>
+                  <Text style={styles.noImageText}>📷 No hay imagen disponible</Text>
                 </View>
               )}
               
               {/* Nueva imagen */}
               <View style={styles.newImageContainer}>
-                <Text style={styles.imageLabel}>Nueva imagen (opcional):</Text>
+                <Text style={styles.imageLabel}>🆕 Cambiar imagen (opcional)</Text>
+                <Text style={styles.imageDescription}>
+                  Puedes tomar una nueva foto o seleccionar una de la galería
+                </Text>
                 <View style={styles.imageButtons}>
                   <TouchableOpacity style={styles.imageButton} onPress={handleTakePhoto}>
                     <Text style={styles.imageButtonText}>📷 Nueva foto</Text>
@@ -210,11 +221,14 @@ export const EditPlateModal: React.FC<EditPlateModalProps> = ({
                   </TouchableOpacity>
                 </View>
                 {newImageUri && (
-                  <Image 
-                    source={{ uri: newImageUri }}
-                    style={styles.newImage}
-                    resizeMode="cover"
-                  />
+                  <View style={styles.newImagePreview}>
+                    <Text style={styles.newImageLabel}>🆕 Vista previa de la nueva imagen:</Text>
+                    <Image 
+                      source={{ uri: newImageUri }}
+                      style={styles.newImage}
+                      resizeMode="cover"
+                    />
+                  </View>
                 )}
               </View>
             </View>
@@ -288,10 +302,18 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f8f9fa',
+    minWidth: 36,
+    minHeight: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   closeButtonText: {
-    fontSize: 24,
-    color: '#999',
+    fontSize: 20,
+    color: '#666',
     fontWeight: 'bold',
   },
   scrollView: {
@@ -369,37 +391,83 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   currentImageContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
     alignItems: 'center',
+    backgroundColor: '#f0f8ff',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   newImageContainer: {
     marginBottom: 12,
     alignItems: 'center',
+    backgroundColor: '#f0fff0',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#28a745',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   imageLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8,
+    marginBottom: 12,
+    textAlign: 'center',
   },
   image: {
-    width: 200,
-    height: 150,
-    borderRadius: 8,
+    width: 280,
+    height: 200,
+    borderRadius: 12,
     marginBottom: 8,
+    borderWidth: 3,
+    borderColor: '#007AFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   imageButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 12,
+    marginBottom: 16,
+    width: '100%',
   },
   imageButton: {
     backgroundColor: '#007AFF',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    minWidth: 100,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 10,
+    minWidth: 120,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   imageButtonText: {
     color: 'white',
@@ -407,11 +475,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   newImage: {
-    width: 200,
-    height: 150,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#007AFF',
+    width: 280,
+    height: 200,
+    borderRadius: 12,
+    borderWidth: 3,
+    borderColor: '#28a745',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -423,18 +499,30 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 10,
     alignItems: 'center',
     marginHorizontal: 8,
+    minHeight: 48,
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   cancelButton: {
     backgroundColor: '#f8f9fa',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ddd',
   },
   saveButton: {
     backgroundColor: '#28a745',
+    borderWidth: 2,
+    borderColor: '#28a745',
   },
   cancelButtonText: {
     color: '#666',
@@ -445,5 +533,45 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  imageInfo: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+  },
+  noImageContainer: {
+    marginBottom: 12,
+    alignItems: 'center',
+    backgroundColor: '#f0fff0',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#28a745',
+  },
+  noImageText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  newImagePreview: {
+    marginBottom: 12,
+    alignItems: 'center',
+    backgroundColor: '#f0fff0',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#28a745',
+  },
+  newImageLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  imageDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+    textAlign: 'center',
   },
 }); 

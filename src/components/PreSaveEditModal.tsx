@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Image,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { PlateData, LocationData, PlateRecognitionResult } from '../types';
 import { useImagePicker } from '../hooks/useImagePicker';
@@ -117,14 +118,15 @@ export const PreSaveEditModal: React.FC<PreSaveEditModalProps> = ({
   };
 
   const handleCancel = () => {
-    Alert.alert(
-      'Cancelar',
-      '¿Estás seguro de que quieres cancelar? La matrícula no se guardará.',
-      [
-        { text: 'Continuar editando', style: 'cancel' },
-        { text: 'Cancelar', style: 'destructive', onPress: onCancel },
-      ]
-    );
+    console.log('❌ [PreSaveEditModal] Botón cancelar presionado');
+    // Cerrar directamente sin confirmación
+    onCancel();
+  };
+
+  const handleClose = () => {
+    console.log('❌ [PreSaveEditModal] Botón X presionado');
+    // Cerrar directamente sin confirmación
+    onCancel();
   };
 
   if (!plateResult || !locationData) return null;
@@ -134,107 +136,111 @@ export const PreSaveEditModal: React.FC<PreSaveEditModalProps> = ({
       visible={visible}
       transparent={true}
       animationType="slide"
-      onRequestClose={handleCancel}
+      onRequestClose={handleClose}
     >
       <View style={styles.modal}>
         <View style={styles.modalContent}>
           <View style={styles.header}>
-            <Text style={styles.title}>Corregir matrícula</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={handleCancel}>
+            <Text style={styles.title}>📝 Revisar matrícula</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>✕</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.content}>
+          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
             {/* Matrícula editable */}
             <View style={styles.plateSection}>
-              <Text style={styles.sectionTitle}>Matrícula reconocida</Text>
-              <Text style={styles.descriptionText}>
-                Revisa y corrige la matrícula si es necesario
-              </Text>
-              
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Matrícula:</Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={formData.plate}
-                  onChangeText={handlePlateEdit}
-                  placeholder="Ej: 1234ABC"
-                  maxLength={10}
-                  autoCapitalize="characters"
-                />
+              <Text style={styles.sectionTitle}>🚗 Matrícula detectada</Text>
+              <TextInput
+                style={styles.textInput}
+                value={formData.plate}
+                onChangeText={handlePlateEdit}
+                placeholder="Ej: 1234ABC"
+                maxLength={10}
+                autoCapitalize="characters"
+              />
+            </View>
+
+            {/* Información compacta */}
+            <View style={styles.infoSection}>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>📍 Ubicación:</Text>
+                <Text style={styles.infoValue}>
+                  {locationData.latitude.toFixed(4)}, {locationData.longitude.toFixed(4)}
+                </Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>🎯 Precisión:</Text>
+                <Text style={styles.infoValue}>
+                  {locationData.accuracy?.toFixed(1) || 'N/A'} m
+                </Text>
               </View>
             </View>
 
-            {/* Ubicación en mapa */}
+            {/* Mapa compacto */}
             <View style={styles.mapSection}>
-              <Text style={styles.sectionTitle}>Ubicación detectada</Text>
+              <Text style={styles.sectionTitle}>🗺️ Ubicación</Text>
               <MiniMap location={{
                 latitude: locationData.latitude,
                 longitude: locationData.longitude,
                 accuracy: locationData.accuracy,
                 timestamp: Date.now()
               }} />
-              
-              <View style={styles.locationInfo}>
-                <Text style={styles.locationText}>
-                  📍 Lat: {locationData.latitude.toFixed(6)}
-                </Text>
-                <Text style={styles.locationText}>
-                  📍 Lon: {locationData.longitude.toFixed(6)}
-                </Text>
-                <Text style={styles.locationText}>
-                  🎯 Precisión: {locationData.accuracy?.toFixed(1) || 'N/A'} metros
-                </Text>
-              </View>
             </View>
 
-            {/* Imagen del coche */}
+            {/* Imagen compacta */}
             <View style={styles.imageSection}>
-              <Text style={styles.sectionTitle}>Imagen del vehículo</Text>
-              {newImageUri ? (
-                <Image 
-                  source={{ uri: newImageUri }}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
-              ) : imageUri ? (
-                <Image 
-                  source={{ uri: imageUri }}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View style={styles.noImageContainer}>
-                  <Text style={styles.noImageText}>Sin imagen</Text>
-                </View>
-              )}
+              <Text style={styles.sectionTitle}>📸 Imagen</Text>
+              <View style={styles.imageContainer}>
+                {newImageUri ? (
+                  <Image 
+                    source={{ uri: newImageUri }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                ) : imageUri ? (
+                  <Image 
+                    source={{ uri: imageUri }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.noImageContainer}>
+                    <Text style={styles.noImageText}>Sin imagen</Text>
+                  </View>
+                )}
+              </View>
               
               <View style={styles.imageButtons}>
                 <TouchableOpacity style={styles.imageButton} onPress={handleTakePhoto}>
-                  <Text style={styles.imageButtonText}>📷 Nueva foto</Text>
+                  <Text style={styles.imageButtonText}>📷 Foto</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.imageButton} onPress={handlePickImage}>
                   <Text style={styles.imageButtonText}>🖼️ Galería</Text>
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </ScrollView>
 
           {/* Botones de acción */}
           <View style={styles.actionsContainer}>
             <TouchableOpacity 
               style={[styles.actionButton, styles.cancelButton]} 
-              onPress={handleCancel}
+              onPress={() => {
+                console.log('❌ [PreSaveEditModal] Botón cancelar presionado (inline)');
+                onCancel();
+              }}
               disabled={isLoading}
+              activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
+              <Text style={styles.cancelButtonText}>❌ Cancelar</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={[styles.actionButton, styles.saveButton]} 
               onPress={handleSave}
               disabled={isLoading}
+              activeOpacity={0.7}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color="white" />
@@ -252,34 +258,35 @@ export const PreSaveEditModal: React.FC<PreSaveEditModalProps> = ({
 const styles = StyleSheet.create({
   modal: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
   },
   modalContent: {
     backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 24,
-    margin: 20,
+    borderRadius: 20,
+    padding: 20,
+    width: '100%',
+    maxWidth: 500,
     maxHeight: '90%',
-    width: '90%',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#f0f0f0',
   },
   title: {
     fontSize: 20,
@@ -289,87 +296,107 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f8f9fa',
+    minWidth: 36,
+    minHeight: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   closeButtonText: {
-    fontSize: 24,
-    color: '#999',
+    fontSize: 20,
+    color: '#666',
     fontWeight: 'bold',
   },
-  content: {
+  scrollView: {
     flex: 1,
   },
   plateSection: {
-    marginBottom: 24,
-    padding: 16,
+    marginBottom: 20,
+    padding: 18,
     backgroundColor: '#f8f9fa',
     borderRadius: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#007AFF',
   },
-  mapSection: {
-    marginBottom: 24,
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 14,
+  },
+  textInput: {
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    padding: 14,
+    fontSize: 20,
+    backgroundColor: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
+  infoSection: {
+    marginBottom: 20,
     padding: 16,
     backgroundColor: '#f0f8ff',
     borderRadius: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#28a745',
   },
-  imageSection: {
-    marginBottom: 24,
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  infoValue: {
+    fontSize: 16,
+    color: '#666',
+    fontFamily: 'monospace',
+  },
+  mapSection: {
+    marginBottom: 20,
     padding: 16,
     backgroundColor: '#fff8f0',
     borderRadius: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#ff9500',
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-    textAlign: 'center',
+  imageSection: {
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: '#f0f8ff',
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#007AFF',
   },
-  descriptionText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 16,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#555',
-    marginBottom: 8,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
+  imageContainer: {
+    width: '100%',
+    height: 180,
     borderRadius: 8,
-    padding: 12,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    letterSpacing: 1,
+    marginBottom: 10,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
-    height: 200,
+    height: '100%',
     borderRadius: 8,
-    marginBottom: 12,
   },
   noImageContainer: {
     width: '100%',
-    height: 200,
+    height: 180,
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
   },
   noImageText: {
     color: '#999',
@@ -385,7 +412,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     minWidth: 100,
+    minHeight: 36,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   imageButtonText: {
     color: 'white',
@@ -397,8 +426,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
     paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopWidth: 2,
+    borderTopColor: '#f0f0f0',
   },
   actionButton: {
     flex: 1,
@@ -406,14 +435,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginHorizontal: 8,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   cancelButton: {
     backgroundColor: '#f8f9fa',
     borderWidth: 1,
     borderColor: '#ddd',
+    minHeight: 44,
   },
   saveButton: {
     backgroundColor: '#28a745',
+    minHeight: 44,
   },
   cancelButtonText: {
     color: '#666',
@@ -434,19 +467,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 16,
-  },
-  locationInfo: {
-    marginTop: 12,
-    padding: 12,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#28a745',
-  },
-  locationText: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
+    borderRadius: 20,
   },
 }); 

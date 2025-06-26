@@ -22,7 +22,6 @@ import { useBackendConnection } from './src/hooks/useBackendConnection';
 // Importar componentes
 import { InfoModal } from './src/components/InfoModal';
 import { PlateDisplay } from './src/components/PlateDisplay';
-import { MapDisplay } from './src/components/MapDisplay';
 import { BackendHistoryModal } from './src/components/BackendHistoryModal';
 import { ConnectionStatus } from './src/components/ConnectionStatus';
 import { PreSaveEditModal } from './src/components/PreSaveEditModal';
@@ -53,9 +52,6 @@ export default function App() {
     error: connectionError, 
     retryConnection 
   } = useBackendConnection();
-
-  const [editablePlate, setEditablePlate] = useState<string | null>(null);
-  const [plateChanged, setPlateChanged] = useState(false);
 
   const setLoading = (loading: boolean) => {
     setState(prev => ({ ...prev, isLoading: loading }));
@@ -100,9 +96,6 @@ export default function App() {
         location: locationData || prev.location 
       }));
 
-      setEditablePlate(plateResult.plate);
-      setPlateChanged(false);
-
       // Mostrar modal de edición previa si está conectado al backend
       if (backendConnected && locationData) {
         console.log('📝 [App] Mostrando modal de edición previa');
@@ -128,6 +121,12 @@ export default function App() {
   const handlePreSaveEditSave = async (editedPlateData: PlateData) => {
     try {
       console.log('💾 [App] Guardando matrícula editada:', editedPlateData);
+      console.log('📸 [App] Estado de la imagen:', {
+        hasImage: !!state.image,
+        imageUri: state.image?.uri,
+        imageType: typeof state.image?.uri,
+        imageLength: state.image?.uri?.length
+      });
 
       // Enviar al backend con la imagen
       const savedPlate = await apiService.createPlate(editedPlateData, state.image?.uri);
@@ -165,38 +164,6 @@ export default function App() {
     const imageData = await takePhoto();
     if (imageData) {
       await processImage(imageData);
-    }
-  };
-
-  const handlePlateEdit = (text: string) => {
-    setEditablePlate(text);
-    if (state.plate && text !== state.plate.plate) {
-      setPlateChanged(true);
-    } else {
-      setPlateChanged(false);
-    }
-  };
-
-  const handleSaveEditedPlate = async () => {
-    if (!state.plate || !state.location || !state.image || !editablePlate) return;
-    try {
-      setLoading(true);
-      const plateData: PlateData = {
-        plate: editablePlate,
-        latitude: state.location.latitude,
-        longitude: state.location.longitude,
-        accuracy: state.location.accuracy,
-        confidence: state.plate.confidence,
-      };
-      const savedPlate = await apiService.createPlate(plateData, state.image.uri);
-      Alert.alert('Éxito', `Matrícula ${editablePlate} guardada correctamente en el servidor.`);
-      setEditablePlate(null);
-      setPlateChanged(false);
-      setState(prev => ({ ...prev, plate: null, image: null, location: null }));
-    } catch (error) {
-      Alert.alert('Error', 'No se pudo guardar la matrícula.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -287,33 +254,6 @@ export default function App() {
             resizeMode="cover" 
           />
         </View>
-      )}
-
-      {state.plate && (
-        <View style={{ width: '100%', maxWidth: 400, alignItems: 'center', marginBottom: 18 }}>
-          <Text style={styles.plateTitle}>Matrícula reconocida (puedes corregirla):</Text>
-          <TextInput
-            style={styles.plateEditInput}
-            value={editablePlate ?? ''}
-            onChangeText={handlePlateEdit}
-            maxLength={10}
-            autoCapitalize="characters"
-            editable={true}
-          />
-          {plateChanged && (
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSaveEditedPlate}
-              disabled={isLoading}
-            >
-              <Text style={styles.saveButtonText}>Guardar</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
-
-      {state.location && state.plate && !isLoading && (
-        <MapDisplay location={state.location} plate={state.plate} />
       )}
 
       {state.error && (
@@ -436,38 +376,5 @@ const styles = StyleSheet.create({
     color: '#721c24',
     fontSize: 14,
     textAlign: 'center',
-  },
-  plateTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 6,
-    color: '#0056b3',
-    textAlign: 'center',
-  },
-  plateEditInput: {
-    borderWidth: 1,
-    borderColor: '#007BFF',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 22,
-    color: '#004085',
-    letterSpacing: 3,
-    textAlign: 'center',
-    backgroundColor: '#f9f9f9',
-    marginBottom: 10,
-    width: '100%',
-    maxWidth: 340,
-  },
-  saveButton: {
-    backgroundColor: '#28a745',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
