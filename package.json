@@ -1,17 +1,30 @@
 {
   "name": "localizadordematriculas",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "App.tsx",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:web": "expo export --platform web",
+    "build:android": "expo build:android",
+    "build:ios": "expo build:ios",
+    "build:production": "node build-production.js",
+    "deploy:web": "npm run build:web && echo 'Sube la carpeta dist/ a tu servidor web'",
+    "clean": "expo start --clear"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
     "@expo/vector-icons": "^14.1.0",
-    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/stack": "^7.4.1",
     "exif-js": "^2.3.0",
@@ -26,12 +39,13 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.4",
-    "react-native-gesture-handler": "^2.26.0",
-    "react-native-maps": "^1.24.3",
-    "react-native-reanimated": "^3.18.0",
-    "react-native-safe-area-context": "^5.5.0",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-maps": "1.20.1",
+    "react-native-reanimated": "~3.17.4",
+    "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "^4.11.1",
-    "react-native-web": "^0.20.0"
+    "react-native-web": "^0.20.0",
+    "expo-dev-client": "~5.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
